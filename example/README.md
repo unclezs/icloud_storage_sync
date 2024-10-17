@@ -16,6 +16,8 @@ This Flutter application demonstrates how to integrate iCloud synchronization fu
  
  🖼️ User-friendly interface for file operations
 
+<br>
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -28,11 +30,11 @@ This Flutter application demonstrates how to integrate iCloud synchronization fu
 
 1. Clone this repository:
    ```sh
-   git clone https://github.com/yourusername/icloud-sync-example.git
+   git clone https://github.com/DevCodeSpace/icloud_storage_sync.git
    ```
 2. Navigate to the project directory:
    ```sh
-   cd icloud-sync-example
+   cd icloud_storage_sync
    ```
 3. Install dependencies:
    ```sh
