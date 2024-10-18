@@ -2,7 +2,7 @@
 
 **Seamless iCloud integration for your Flutter iOS apps!**
 
-![iCloud Storage Sync Banner](https://raw.githubusercontent.com/DevCodeSpace/icloud_storage_sync/main/assets/icloud_storage_sync_pub_dev_banner.jpg)
+![iCloud Storage Sync Banner](https://raw.githubusercontent.com/DevCodeSpace/icloud_storage_sync/refs/heads/main/assets/icloud_storage_sync_pub_dev_banner.jpg)
 
 ## 🌟 Introduction
 
@@ -168,7 +168,7 @@ Future<void> move({
 
 ## 🤝 Contributing
 
-[![](https://raw.githubusercontent.com/DevCodeSpace/icloud_storage_sync/main/assets/contributors.png)](https://github.com/DevCodeSpace/icloud_storage_sync/graphs/contributors)
+[![](https://raw.githubusercontent.com/DevCodeSpace/icloud_storage_sync/refs/heads/main/assets/contributors.png)](https://github.com/DevCodeSpace/icloud_storage_sync/graphs/contributors)
 
 ## 🙏 Acknowledgements
 
