@@ -40,6 +40,8 @@ class IcloudController extends GetxController {
   // Instance of the iCloud sync plugin
   final icloudSyncPlugin = IcloudStorageSync();
 
+  final searchIcloudFileController = TextEditingController().obs;
+
   // Observable list to store cloud files
   RxList<CloudFiles>? cloudFiles = <CloudFiles>[].obs;
   // Observable list of text editing controllers for cloud file names
@@ -137,6 +139,22 @@ class IcloudController extends GetxController {
       }
     } on PlatformException catch (e) {
       log("Failed to rename file in iCloud Drive: ${e.message}");
+    }
+  }
+
+  /// replace a file in iCloud
+  Future replaceFile(
+      {required String updatedFilePath, required String relativePath}) async {
+    try {
+      if (updatedFilePath.isNotEmpty && relativePath.isNotEmpty) {
+        await icloudSyncPlugin.replace(
+          containerId: iCloudContainerId,
+          updatedFilePath: updatedFilePath,
+          relativePath: relativePath,
+        );
+      }
+    } on PlatformException catch (e) {
+      log(" ${e.message}");
     }
   }
 

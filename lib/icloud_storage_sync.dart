@@ -224,6 +224,52 @@ class IcloudStorageSync {
     );
   }
 
+  /// Replace an existing file in the iCloud container with new content.
+  ///
+  /// This function performs an atomic update operation by:
+  /// 1. Deleting the existing file at [relativePath]
+  /// 2. Uploading the new file from [updatedFilePath]
+  /// 3. Waiting for the operation to complete
+  ///
+  /// Parameters:
+  /// - [containerId]: The ID of the iCloud container where the file exists
+  /// - [updatedFilePath]: The local path to the new version of the file
+  /// - [relativePath]: The relative path of the existing file in iCloud
+  ///
+  /// Throws:
+  /// - [InvalidArgumentException] if the relative path is invalid
+  /// - [InvalidArgumentException] if the updated file path is empty
+  /// - May throw platform-specific exceptions during delete or upload operations
+  ///
+  /// Note: There is a 2-second delay after the operation to ensure iCloud sync completion
+  Future<void> replace({
+    required String containerId,
+    required String updatedFilePath,
+    required String relativePath,
+  }) async {
+    // Validate the iCloud relative path format
+    if (!_validateRelativePath(Uri.decodeComponent(relativePath))) {
+      throw InvalidArgumentException('invalid relativePath');
+    }
+
+    // Ensure the new file path is not empty
+    if (updatedFilePath.isEmpty) {
+      throw InvalidArgumentException('invalid updatedFilePath');
+    }
+
+    // Delete the existing file from iCloud
+    await delete(containerId: containerId, relativePath: relativePath);
+
+    // Upload the new version of the file
+    await upload(
+      containerId: containerId,
+      filePath: updatedFilePath,
+    );
+
+    // Wait for iCloud sync to complete
+    await Future.delayed(const Duration(seconds: 2));
+  }
+
   /// Validates that a given path is a valid relative path.
   /// Each part of the path must be a valid file or directory name.
   static bool _validateRelativePath(String path) {

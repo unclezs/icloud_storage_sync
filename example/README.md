@@ -134,6 +134,25 @@ Future<void> renameFile(CloudFiles oldFile, String newName) async {
 }
 ```
 
+### 🔄 Replace a File in iCloud
+
+```dart
+Future replaceFile(
+    {required String updatedFilePath, required String relativePath}) async {
+  try {
+    if (updatedFilePath.isNotEmpty && relativePath.isNotEmpty) {
+      await icloudSyncPlugin.replace(
+        containerId: iCloudContainerId,
+        updatedFilePath: updatedFilePath,
+        relativePath: relativePath,
+      );
+    }
+  } on PlatformException catch (e) {
+    log("replace file failed ${e.message}");
+  }
+}
+```
+
 ### 🗑️ Deleting a File from iCloud
 
 ```dart

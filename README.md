@@ -130,6 +130,21 @@ Future<void> delete({
 }
 ```
 
+### 🔄 Replace iCloud Files
+
+```dart
+Future replaceFile({
+  required String updatedFilePath,
+  required String relativePath
+  }) async {
+    await icloudSyncPlugin.replace(
+      containerId: iCloudContainerId,
+      updatedFilePath: updatedFilePath,
+      relativePath: relativePath,
+    );
+}
+```
+
 ### 🔀 Moving iCloud Files
 
 ```dart
