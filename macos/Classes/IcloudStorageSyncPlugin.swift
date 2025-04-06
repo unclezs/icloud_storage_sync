@@ -35,6 +35,8 @@ public class IcloudStorageSyncPlugin: NSObject, FlutterPlugin {
       move(call, result)
     case "createEventChannel":
       createEventChannel(call, result)
+    case "fileExists":
+      fileExists(call, result)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -431,6 +433,29 @@ public class IcloudStorageSyncPlugin: NSObject, FlutterPlugin {
   
   private func removeStreamHandler(_ eventChannelName: String) {
     self.streamHandlers[eventChannelName] = nil
+  }
+  
+  private func fileExists(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let args = call.arguments as? Dictionary<String, Any>,
+          let containerId = args["containerId"] as? String,
+          let cloudFileName = args["cloudFileName"] as? String
+    else {
+      result(argumentError)
+      return
+    }
+    
+    guard let containerURL = FileManager.default.url(forUbiquityContainerIdentifier: containerId)
+    else {
+      result(containerError)
+      return
+    }
+    
+    let cloudFileURL = containerURL.appendingPathComponent(cloudFileName)
+    let fileManager = FileManager.default
+    
+    // 检查文件是否存在
+    let exists = fileManager.fileExists(atPath: cloudFileURL.path)
+    result(exists)
   }
   
   let argumentError = FlutterError(code: "E_ARG", message: "Invalid Arguments", details: nil)

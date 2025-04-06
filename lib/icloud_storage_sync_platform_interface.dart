@@ -104,4 +104,17 @@ abstract class IcloudStorageSyncPlatform extends PlatformInterface {
   }) async {
     throw UnimplementedError('move() has not been implemented.');
   }
+
+  /// Checks if a file exists in the iCloud container.
+  ///
+  /// [containerId] is the iCloud Container Id.
+  /// [relativePath] is the relative path of the file in iCloud.
+  ///
+  /// Returns a Future that resolves to a boolean indicating whether the file exists.
+  Future<bool> fileExists({
+    required String containerId,
+    required String relativePath,
+  }) async {
+    throw UnimplementedError('fileExists() has not been implemented.');
+  }
 }
