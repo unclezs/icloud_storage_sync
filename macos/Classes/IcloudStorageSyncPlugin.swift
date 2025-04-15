@@ -452,33 +452,35 @@ public class IcloudStorageSyncPlugin: NSObject, FlutterPlugin {
     }
     
     let cloudFileURL = containerURL.appendingPathComponent(cloudFileName)
-    let fileManager = FileManager.default
+    let fileCoordinator = NSFileCoordinator(filePresenter: nil)
     
-    // 检查文件是否存在
-    let exists = fileManager.fileExists(atPath: cloudFileURL.path)
-    
-    if exists {
-      result(true)
-      return
-    }
-    
-    // 如果文件本地不存在，且需要检查云端
-    if includeNotDownloaded {
-      let query = NSMetadataQuery.init()
-      query.operationQueue = .main
-      query.searchScopes = querySearchScopes
-      query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemPathKey, cloudFileURL.path)
+    fileCoordinator.coordinate(readingItemAt: cloudFileURL, options: [], error: nil) { [self] readingURL in
+      // 检查文件是否存在
+      let exists = FileManager.default.fileExists(atPath: readingURL.path)
       
-      NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: query, queue: query.operationQueue) { [self] (notification) in
-        let existsInCloud = query.results.count > 0
-        result(existsInCloud)
-        removeObservers(query)
-        query.stop()
+      if exists {
+        result(true)
+        return
       }
       
-      query.start()
-    } else {
-      result(false)
+      // 如果文件本地不存在，且需要检查云端
+      if includeNotDownloaded {
+        let query = NSMetadataQuery.init()
+        query.operationQueue = .main
+        query.searchScopes = querySearchScopes
+        query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemPathKey, cloudFileURL.path)
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: query, queue: query.operationQueue) { [self] (notification) in
+          let existsInCloud = query.results.count > 0
+          result(existsInCloud)
+          removeObservers(query)
+          query.stop()
+        }
+        
+        query.start()
+      } else {
+        result(false)
+      }
     }
   }
   
