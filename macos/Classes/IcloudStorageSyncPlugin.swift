@@ -35,6 +35,8 @@ public class IcloudStorageSyncPlugin: NSObject, FlutterPlugin {
       move(call, result)
     case "createEventChannel":
       createEventChannel(call, result)
+    case "fileExists":
+      fileExists(call, result)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -431,6 +433,53 @@ public class IcloudStorageSyncPlugin: NSObject, FlutterPlugin {
   
   private func removeStreamHandler(_ eventChannelName: String) {
     self.streamHandlers[eventChannelName] = nil
+  }
+  
+  private func fileExists(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let args = call.arguments as? Dictionary<String, Any>,
+          let containerId = args["containerId"] as? String,
+          let cloudFileName = args["cloudFileName"] as? String,
+          let includeNotDownloaded = args["includeNotDownloaded"] as? Bool
+    else {
+      result(argumentError)
+      return
+    }
+    
+    guard let containerURL = FileManager.default.url(forUbiquityContainerIdentifier: containerId)
+    else {
+      result(containerError)
+      return
+    }
+    
+    let cloudFileURL = containerURL.appendingPathComponent(cloudFileName)
+    let fileManager = FileManager.default
+    
+    // 检查文件是否存在
+    let exists = fileManager.fileExists(atPath: cloudFileURL.path)
+    
+    if exists {
+      result(true)
+      return
+    }
+    
+    // 如果文件本地不存在，且需要检查云端
+    if includeNotDownloaded {
+      let query = NSMetadataQuery.init()
+      query.operationQueue = .main
+      query.searchScopes = querySearchScopes
+      query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemPathKey, cloudFileURL.path)
+      
+      NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: query, queue: query.operationQueue) { [self] (notification) in
+        let existsInCloud = query.results.count > 0
+        result(existsInCloud)
+        removeObservers(query)
+        query.stop()
+      }
+      
+      query.start()
+    } else {
+      result(false)
+    }
   }
   
   let argumentError = FlutterError(code: "E_ARG", message: "Invalid Arguments", details: nil)

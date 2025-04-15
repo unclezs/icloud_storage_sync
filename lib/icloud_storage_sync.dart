@@ -270,6 +270,29 @@ class IcloudStorageSync {
     await Future.delayed(const Duration(seconds: 2));
   }
 
+  /// Checks if a file exists in the iCloud container.
+  ///
+  /// [containerId] The ID of the iCloud container to check.
+  /// [relativePath] The relative path of the file in iCloud.
+  /// [includeNotDownloaded] If true, will also check if the file exists in cloud even if not downloaded locally.
+  ///
+  /// Returns a Future that resolves to a boolean indicating whether the file exists.
+  Future<bool> fileExists({
+    required String containerId,
+    required String relativePath,
+    bool includeNotDownloaded = false,
+  }) async {
+    if (!_validateRelativePath(Uri.decodeComponent(relativePath))) {
+      throw InvalidArgumentException('invalid relativePath');
+    }
+
+    return await IcloudStorageSyncPlatform.instance.fileExists(
+      containerId: containerId,
+      relativePath: Uri.decodeComponent(relativePath),
+      includeNotDownloaded: includeNotDownloaded,
+    );
+  }
+
   /// Validates that a given path is a valid relative path.
   /// Each part of the path must be a valid file or directory name.
   static bool _validateRelativePath(String path) {

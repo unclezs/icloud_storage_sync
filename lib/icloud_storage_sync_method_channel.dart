@@ -180,6 +180,21 @@ class MethodChannelIcloudStorageSync extends IcloudStorageSyncPlatform {
     });
   }
 
+  /// Checks if a file exists in the iCloud container.
+  @override
+  Future<bool> fileExists({
+    required String containerId,
+    required String relativePath,
+    bool includeNotDownloaded = false,
+  }) async {
+    final exists = await methodChannel.invokeMethod<bool>('fileExists', {
+      'containerId': containerId,
+      'cloudFileName': relativePath,
+      'includeNotDownloaded': includeNotDownloaded,
+    });
+    return exists ?? false;
+  }
+
   /// Converts a list of dynamic maps to a list of ICloudFile objects.
   List<ICloudFile> _mapFilesFromDynamicList(
       List<Map<dynamic, dynamic>>? mapList) {

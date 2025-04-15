@@ -54,6 +54,15 @@ class MockIcloudStorageSyncPlatform
       StreamHandler<double>? onProgress}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> fileExists({
+    required String containerId,
+    required String relativePath,
+    bool includeNotDownloaded = false,
+  }) async {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
